@@ -1,0 +1,763 @@
+// J-Ada Extended Grammar
+
+// Root program structure
+Program           ::= Statement*
+
+// Statements (variable declarations, expressions, control flow, and others)
+Statement         ::= Declaration | ExpressionStatement | ControlStatement | ErrorHandlingStatement | ClassDeclaration | StructDeclaration | ImportStatement
+
+// Declaration of variables, functions, and classes
+Declaration       ::= VariableDeclaration | FunctionDeclaration | ClassDeclaration | StructDeclaration | ImportDeclaration
+
+// Import statement (to import other modules or libraries)
+ImportDeclaration ::= "import" Identifier ("," Identifier)* ";"
+
+// Variable Declaration (supports simple and complex types)
+VariableDeclaration ::= "var" Identifier ":" Type "=" Expression ";"
+
+// Function Declaration (supports function signatures with types and return values)
+FunctionDeclaration ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+// Parameter List for functions (supports multiple parameters)
+ParameterList     ::= Parameter ("," Parameter)*
+
+Parameter         ::= Identifier ":" Type
+
+// Class Declaration (support for class definitions and methods)
+ClassDeclaration  ::= "class" Identifier "{" ClassMember* "}"
+
+ClassMember      ::= MethodDeclaration | PropertyDeclaration
+
+MethodDeclaration ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+PropertyDeclaration ::= "property" Identifier ":" Type "=" Expression ";"
+
+// Struct Declaration (support for structures similar to classes but more lightweight)
+StructDeclaration ::= "struct" Identifier "{" StructMember* "}"
+
+StructMember     ::= VariableDeclaration | PropertyDeclaration
+
+// Import statement (imports an external module)
+ImportStatement  ::= "import" Identifier ";"
+
+// Type System (supports primitive types and user-defined types)
+Type             ::= PrimitiveType | Identifier | ArrayType | MapType | StructType | ClassType
+
+PrimitiveType    ::= "int" | "float" | "string" | "bool" | "char" | "void" | "any"
+
+// Array and Map Types (support for collections)
+ArrayType        ::= "array" "[" Type "]"
+MapType          ::= "map" "[" Type "," Type "]"
+StructType       ::= "struct" Identifier
+ClassType        ::= "class" Identifier
+
+// Expressions (used for variable assignments, function calls, etc.)
+Expression        ::= Literal | Identifier | FunctionCall | BinaryExpression | UnaryExpression | ParenthesizedExpression | ArrayAccess | MapAccess | MemberAccess | TypeCast
+
+// Literals (primitive data types)
+Literal           ::= IntegerLiteral | FloatLiteral | StringLiteral | BooleanLiteral | CharLiteral | NullLiteral
+
+IntegerLiteral    ::= [0-9]+
+FloatLiteral      ::= [0-9]* "." [0-9]+
+StringLiteral     ::= "\"" [^\"]* "\""
+BooleanLiteral    ::= "true" | "false"
+CharLiteral       ::= "'" . "'"
+NullLiteral       ::= "null"
+
+// Identifiers (names of variables, functions, classes, etc.)
+Identifier        ::= [a-zA-Z_][a-zA-Z0-9_]*
+
+// Function Call (calls a function with arguments)
+FunctionCall      ::= Identifier "(" ArgumentList? ")"
+
+// Argument List for function calls
+ArgumentList      ::= Expression ("," Expression)*
+
+// Array and Map Access
+ArrayAccess       ::= Identifier "[" Expression "]"
+MapAccess         ::= Identifier "[" Expression "," Expression "]"
+
+// Member Access (for structs, classes, and objects)
+MemberAccess      ::= Identifier "." Identifier
+
+// Binary and Unary Expressions (arithmetic, logical, comparison)
+BinaryExpression  ::= Expression Operator Expression
+UnaryExpression   ::= Operator Expression
+
+// Operators (arithmetic, logical, and comparison operators)
+Operator          ::= "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "!" | "&" | "|"
+
+// Parenthesized Expressions
+ParenthesizedExpression ::= "(" Expression ")"
+
+// Type Casting (casting between types)
+TypeCast          ::= "(" Type ")" Expression
+
+// Control Flow Statements (if-else, while, for)
+ControlStatement  ::= IfStatement | WhileStatement | ForStatement | SwitchStatement | BreakStatement | ContinueStatement
+
+IfStatement       ::= "if" "(" Expression ")" "{" Statement* "}" ( "else" "{" Statement* "}" )?
+
+WhileStatement    ::= "while" "(" Expression ")" "{" Statement* "}"
+
+ForStatement      ::= "for" "(" ForInitialization ";" Expression ";" ForUpdate ")" "{" Statement* "}"
+
+ForInitialization ::= VariableDeclaration | ExpressionStatement
+
+ForUpdate         ::= ExpressionStatement
+
+SwitchStatement   ::= "switch" "(" Expression ")" "{" CaseClause* "}"
+
+CaseClause        ::= "case" Expression ":" Statement* | "default" ":" Statement*
+
+BreakStatement    ::= "break" ";"
+
+ContinueStatement ::= "continue" ";"
+
+// Error Handling Statements (try-catch-finally mechanism for exception handling)
+ErrorHandlingStatement ::= TryCatchStatement | ThrowStatement
+
+TryCatchStatement ::= "try" "{" Statement* "}" "catch" "(" Identifier ":" Type ")" "{" Statement* "}" ("finally" "{" Statement* "}")?
+
+ThrowStatement    ::= "throw" Expression ";"
+
+// Loops and Iterators (support for loop constructs)
+LoopStatement     ::= WhileStatement | ForStatement | ForInStatement
+
+ForInStatement    ::= "for" "(" Identifier "in" Expression ")" "{" Statement* "}"
+
+// Expressions and assignments (variable assignments, and increment/decrement operators)
+ExpressionStatement ::= Assignment | IncrementDecrement | FunctionCallStatement
+
+Assignment        ::= Identifier "=" Expression ";"
+
+IncrementDecrement ::= Identifier ("++" | "--") ";"
+
+FunctionCallStatement ::= FunctionCall ";"
+
+// Comments (single-line and multi-line comments)
+Comment           ::= "//" [^\n]* | "/*" .*? "*/"
+
+// Advanced Features (Support for async/await, lambdas, and more)
+AsyncFunctionDeclaration ::= "async" "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+AwaitExpression   ::= "await" Expression
+
+LambdaExpression  ::= "lambda" "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+// Typedefs (Allow creating aliases for existing types)
+TypedefDeclaration ::= "typedef" Type Identifier ";"
+
+// Decorators (Attributes or metadata for functions or classes)
+Decorator         ::= "@" Identifier
+
+// Program Flow (entry point function)
+ProgramEntryPoint ::= "main" "(" ")" "{" Statement* "}"
+
+// Root structure for a J-Ada program
+Program           ::= DeclarationSection StatementSection
+
+// Declaration Section (where types, variables, functions, etc., are defined)
+DeclarationSection ::= TypeDeclaration* VariableDeclaration* FunctionDeclaration* ClassDeclaration* StructDeclaration* ImportDeclaration*
+
+// Statement Section (where logic of the program is expressed)
+StatementSection  ::= Statement*
+
+// Declaration Syntax for Variables, Functions, and Types
+Declaration       ::= VariableDeclaration | FunctionDeclaration | TypeDeclaration | ClassDeclaration | StructDeclaration | ImportDeclaration
+
+// Import declaration for importing modules or libraries
+ImportDeclaration ::= "import" Identifier ("," Identifier)* ";"
+
+// Type Declarations (Custom types or aliases for types)
+TypeDeclaration   ::= "type" Identifier "=" Type ";"
+
+// Variable Declaration (Supports simple and complex types)
+VariableDeclaration ::= "var" Identifier ":" Type "=" Expression ";"
+
+// Function Declaration (Function signature with arguments and return types)
+FunctionDeclaration ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+// Parameter List for function calls
+ParameterList     ::= Parameter ("," Parameter)*
+
+Parameter         ::= Identifier ":" Type
+
+// Class Declaration (Supports classes, inheritance, methods, properties)
+ClassDeclaration  ::= "class" Identifier InheritanceClause? "{" ClassMember* "}"
+
+InheritanceClause ::= "extends" Identifier
+
+ClassMember      ::= MethodDeclaration | PropertyDeclaration | ConstructorDeclaration
+
+MethodDeclaration ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+PropertyDeclaration ::= "property" Identifier ":" Type "=" Expression ";"
+
+ConstructorDeclaration ::= "constructor" "(" ParameterList? ")" "{" Statement* "}"
+
+// Struct Declaration (Supports structures with data members)
+StructDeclaration ::= "struct" Identifier "{" StructMember* "}"
+
+StructMember     ::= VariableDeclaration | PropertyDeclaration
+
+// Control Flow Statements (Support for branching and looping)
+ControlStatement  ::= IfStatement | WhileStatement | ForStatement | SwitchStatement | BreakStatement | ContinueStatement
+
+IfStatement       ::= "if" "(" Expression ")" "{" Statement* "}" ( "else" "{" Statement* "}" )?
+
+WhileStatement    ::= "while" "(" Expression ")" "{" Statement* "}"
+
+ForStatement      ::= "for" "(" ForInitialization ";" Expression ";" ForUpdate ")" "{" Statement* "}"
+
+ForInitialization ::= VariableDeclaration | ExpressionStatement
+
+ForUpdate         ::= ExpressionStatement
+
+SwitchStatement   ::= "switch" "(" Expression ")" "{" CaseClause* "}"
+
+CaseClause        ::= "case" Expression ":" Statement* | "default" ":" Statement*
+
+BreakStatement    ::= "break" ";"
+
+ContinueStatement ::= "continue" ";"
+
+// Pattern Matching (Advanced branching with pattern match)
+PatternMatching   ::= "match" "(" Expression ")" "{" CasePattern+ "}"
+
+CasePattern       ::= "case" Pattern "=>" Statement*
+
+Pattern            ::= LiteralPattern | VariablePattern | WildcardPattern
+
+LiteralPattern    ::= Literal
+
+VariablePattern   ::= Identifier
+
+WildcardPattern   ::= "_"
+
+// Error Handling Mechanisms (Exception handling, custom error types, etc.)
+ErrorHandlingStatement ::= TryCatchStatement | ThrowStatement | CustomErrorHandling
+
+TryCatchStatement ::= "try" "{" Statement* "}" "catch" "(" Identifier ":" Type ")" "{" Statement* "}" ("finally" "{" Statement* "}")?
+
+ThrowStatement    ::= "throw" Expression ";"
+
+// Custom Error Handling (Support for custom error types and error propagation)
+CustomErrorHandling ::= "error" Identifier ":" Type "{" Statement* "}"
+
+// Asynchronous Constructs (Support for async/await and futures)
+AsyncFunctionDeclaration ::= "async" "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+AwaitExpression   ::= "await" Expression
+
+FutureExpression  ::= "future" "(" Expression ")"
+
+// Lambda Functions (Define anonymous functions)
+LambdaExpression  ::= "lambda" "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+// Data Types (Primitive, Custom, and Collection Types)
+Type             ::= PrimitiveType | Identifier | ArrayType | MapType | StructType | ClassType | UnionType
+
+PrimitiveType    ::= "int" | "float" | "string" | "bool" | "char" | "void" | "any"
+
+ArrayType        ::= "array" "[" Type "]"
+
+MapType          ::= "map" "[" Type "," Type "]"
+
+StructType       ::= "struct" Identifier
+
+ClassType        ::= "class" Identifier
+
+UnionType        ::= "union" "[" Type "," Type "]"
+
+// Data Structure Definitions
+ListType          ::= "list" "[" Type "]" // For list-like structures
+QueueType         ::= "queue" "[" Type "]" // For queue-like structures
+StackType         ::= "stack" "[" Type "]" // For stack-like structures
+
+// Lambda Functions and Closures
+LambdaExpression  ::= "lambda" "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+// Generics (Support for generic types and functions)
+GenericTypeDeclaration ::= "generic" Identifier "[" Type "]"
+
+GenericFunctionDeclaration ::= "generic function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+// Program Entry Point (Defining the entry point of the program)
+ProgramEntryPoint ::= "main" "(" ")" "{" Statement* "}"
+
+// Control Statements (Used for controlling the flow of the program)
+ControlFlowStatement ::= IfStatement | WhileStatement | ForStatement | BreakStatement | ContinueStatement
+
+// Memory and Resource Management (Explicit memory management features)
+MemoryManagement  ::= "alloc" Identifier ":" Type "=" Expression ";"
+                   | "dealloc" Identifier ";"
+
+// Synchronization Mechanisms (Concurrency, threading, locks, etc.)
+Synchronization    ::= MutexDeclaration | SemaphoreDeclaration | LockStatement
+
+MutexDeclaration  ::= "mutex" Identifier ";"
+
+SemaphoreDeclaration ::= "semaphore" Identifier "=" IntegerLiteral ";"
+
+LockStatement     ::= "lock" Identifier "{" Statement* "}"
+
+// Iterators and Collection Manipulation
+IteratorStatement ::= "for" "(" Identifier "in" Expression ")" "{" Statement* "}"
+
+CollectionManipulation ::= "add" Identifier "to" Expression ";"
+                        | "remove" Identifier "from" Expression ";"
+
+// System-level Operations (File I/O, networking, process management)
+FileIOStatement   ::= "read" Identifier "from" Expression ";"
+                   | "write" Expression "to" Identifier ";"
+
+NetworkOperation  ::= "connect" Identifier "to" Expression ";"
+                   | "send" Expression "to" Identifier ";"
+
+// Meta-programming (Support for reflection, code generation, etc.)
+MetaProgramming   ::= ReflectionStatement | CodeGenerationStatement
+
+ReflectionStatement ::= "reflect" "(" Identifier ")" "{" Statement* "}"
+
+CodeGenerationStatement ::= "generate" Identifier "{" Statement* "}"
+
+// Debugging and Logging (Support for debugging and logging)
+DebuggingStatement ::= "log" Expression ";"
+                    | "debug" "(" Expression ")" "{" Statement* "}"
+
+// Comments (Supports single-line and multi-line comments)
+Comment           ::= "//" [^\n]* | "/*" .*? "*/"
+
+// Functional Constructs (First-class functions, closures, immutability)
+FunctionalProgramming  ::= HigherOrderFunction | ClosureExpression | ImmutabilityDeclaration
+
+HigherOrderFunction   ::= "function" Identifier "(" ParameterList ")" ":" Type "{" Statement* "}"
+
+ClosureExpression    ::= "closure" "(" ParameterList ")" ":" Type "{" Statement* "}"
+
+ImmutabilityDeclaration ::= "immutable" Identifier "=" Expression ";"
+
+// Root structure for a J-Ada program
+Program           ::= DeclarationSection StatementSection MainSection
+
+// Declaration Section (where types, variables, functions, etc., are defined)
+DeclarationSection ::= TypeDeclaration* VariableDeclaration* FunctionDeclaration* ClassDeclaration* StructDeclaration* ImportDeclaration* EnumDeclaration* InterfaceDeclaration*
+
+// Main Section (entry point of the program)
+MainSection        ::= "main" "(" ")" "{" Statement* "}"
+
+// Import declaration for importing modules or libraries
+ImportDeclaration  ::= "import" Identifier ("," Identifier)* ";"
+
+// Type Declarations (Custom types or aliases for types)
+TypeDeclaration    ::= "type" Identifier "=" Type ";"
+
+// Enum Declaration (for defining enumerated types)
+EnumDeclaration    ::= "enum" Identifier "{" EnumValue ("," EnumValue)* "}" ";"
+
+EnumValue          ::= Identifier
+
+// Interface Declaration (for defining interfaces that classes can implement)
+InterfaceDeclaration ::= "interface" Identifier "{" InterfaceMember* "}"
+
+InterfaceMember    ::= MethodDeclaration
+
+// Variable Declaration (Supports simple and complex types)
+VariableDeclaration ::= "var" Identifier ":" Type "=" Expression ";"
+
+// Function Declaration (Function signature with arguments and return types)
+FunctionDeclaration ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+// Parameter List for function calls
+ParameterList      ::= Parameter ("," Parameter)*
+
+Parameter          ::= Identifier ":" Type
+
+// Class Declaration (Supports classes, inheritance, methods, properties)
+ClassDeclaration   ::= "class" Identifier InheritanceClause? "{" ClassMember* "}"
+
+InheritanceClause  ::= "extends" Identifier
+
+ClassMember        ::= MethodDeclaration | PropertyDeclaration | ConstructorDeclaration
+
+MethodDeclaration  ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+PropertyDeclaration ::= "property" Identifier ":" Type "=" Expression ";"
+
+ConstructorDeclaration ::= "constructor" "(" ParameterList? ")" "{" Statement* "}"
+
+// Struct Declaration (Supports structures with data members)
+StructDeclaration  ::= "struct" Identifier "{" StructMember* "}"
+
+StructMember       ::= VariableDeclaration | PropertyDeclaration
+
+// Interface Implementation (Classes can implement interfaces)
+InterfaceImplementation ::= "implements" Identifier "{" InterfaceMember* "}"
+
+// Control Flow Statements (Support for branching and looping)
+ControlStatement   ::= IfStatement | WhileStatement | ForStatement | SwitchStatement | BreakStatement | ContinueStatement | MatchStatement
+
+IfStatement        ::= "if" "(" Expression ")" "{" Statement* "}" ( "else" "{" Statement* "}" )?
+
+WhileStatement     ::= "while" "(" Expression ")" "{" Statement* "}"
+
+ForStatement       ::= "for" "(" ForInitialization ";" Expression ";" ForUpdate ")" "{" Statement* "}"
+
+ForInitialization  ::= VariableDeclaration | ExpressionStatement
+
+ForUpdate          ::= ExpressionStatement
+
+SwitchStatement    ::= "switch" "(" Expression ")" "{" CaseClause* "}"
+
+CaseClause         ::= "case" Expression ":" Statement* | "default" ":" Statement*
+
+BreakStatement     ::= "break" ";"
+
+ContinueStatement  ::= "continue" ";"
+
+// Pattern Matching (Advanced pattern matching with guards and conditions)
+PatternMatching    ::= "match" "(" Expression ")" "{" CasePattern+ "}"
+
+CasePattern        ::= "case" Pattern ( "when" Expression )? "=>" Statement*
+
+Pattern             ::= LiteralPattern | VariablePattern | WildcardPattern | TuplePattern | ListPattern
+
+LiteralPattern     ::= Literal
+
+VariablePattern    ::= Identifier
+
+WildcardPattern    ::= "_"
+
+TuplePattern       ::= "(" Pattern ("," Pattern)* ")"
+
+ListPattern        ::= "[" Pattern ("," Pattern)* "]"
+
+// Error Handling Mechanisms (Exception handling, custom error types, etc.)
+ErrorHandlingStatement ::= TryCatchStatement | ThrowStatement | CustomErrorHandling | RetryStatement
+
+TryCatchStatement  ::= "try" "{" Statement* "}" "catch" "(" Identifier ":" Type ")" "{" Statement* "}" ("finally" "{" Statement* "}")?
+
+ThrowStatement     ::= "throw" Expression ";"
+
+CustomErrorHandling ::= "error" Identifier ":" Type "{" Statement* "}"
+
+RetryStatement     ::= "retry" ";"
+
+// Advanced Concurrency Mechanisms (Actors, Channels, Futures, Async)
+ConcurrencyStatement ::= ActorDeclaration | FutureDeclaration | AsyncFunctionDeclaration | ChannelDeclaration | ActorMessage
+
+ActorDeclaration   ::= "actor" Identifier "{" ActorMethodDeclaration* "}"
+
+ActorMethodDeclaration ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+ChannelDeclaration ::= "channel" Identifier "(" Type "," Type ")"
+
+ActorMessage       ::= "message" Identifier "(" Expression* ")"
+
+// Asynchronous Constructs (Support for async/await and futures)
+AsyncFunctionDeclaration ::= "async" "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+AwaitExpression    ::= "await" Expression
+
+FutureExpression   ::= "future" "(" Expression ")"
+
+// Networking Constructs (Simplified networking models for web or socket interaction)
+NetworkOperation   ::= "connect" Identifier "to" Expression ";"
+                    | "send" Expression "to" Identifier ";"
+                    | "receive" Identifier "from" Identifier ";"
+                    | "listen" Identifier "on" Identifier ";"
+
+// Advanced Memory Management (Garbage collection, stack/heap management, and manual memory handling)
+MemoryManagement   ::= "alloc" Identifier ":" Type "=" Expression ";"
+                    | "dealloc" Identifier ";"
+                    | "gc" ";"
+
+// Security Features (Cryptographic and Authentication)
+SecurityStatement  ::= "encrypt" Expression "with" Identifier ";"
+                    | "decrypt" Expression "with" Identifier ";"
+                    | "sign" Expression "with" Identifier ";"
+                    | "verify" Expression "with" Identifier ";"
+
+// Data Structure Libraries (Graphs, Trees, Tries, etc.)
+DataStructureDeclaration ::= "graph" Identifier "{" DataStructureMember* "}"
+                          | "tree" Identifier "{" DataStructureMember* "}"
+                          | "queue" Identifier "{" DataStructureMember* "}"
+                          | "stack" Identifier "{" DataStructureMember* "}"
+
+DataStructureMember ::= VariableDeclaration | FunctionDeclaration
+
+// Meta-programming (Reflection, Code Generation, and Compilation Directives)
+MetaProgramming    ::= ReflectionStatement | CodeGenerationStatement | CompilationDirective
+
+ReflectionStatement ::= "reflect" "(" Identifier ")" "{" Statement* "}"
+
+CodeGenerationStatement ::= "generate" Identifier "{" Statement* "}"
+
+// Compilation Directives (Optimizations and preprocessor directives)
+CompilationDirective ::= "#optimize" ( "space" | "speed" | "size" )
+                     | "#debug" "enable"
+                     | "#debug" "disable"
+
+// Debugging and Tracing (Enabling detailed program tracking)
+DebuggingStatement ::= "log" Expression ";"
+                    | "debug" "(" Expression ")" "{" Statement* "}"
+                    | "trace" "(" Expression ")" "{" Statement* "}"
+
+// High-level System Operations (file IO, process management)
+FileIOStatement    ::= "read" Identifier "from" Expression ";"
+                    | "write" Expression "to" Identifier ";"
+                    | "open" Identifier "for" "read" | "write" | "append" ";"
+                    | "close" Identifier ";"
+
+// Profiling and Performance Management (Real-time profiling, memory tracing)
+ProfilingStatement ::= "profile" Expression "start" ";"
+                    | "profile" Expression "end" ";"
+                    | "track" Expression "memory" ";"
+
+// Events and Reactive Programming (Event-driven, stream processing)
+EventSystem        ::= EventDeclaration | EventHandlerDeclaration | StreamProcessingStatement
+
+EventDeclaration   ::= "event" Identifier "(" ParameterList? ")" "{" Statement* "}"
+
+EventHandlerDeclaration ::= "handler" Identifier "(" ParameterList? ")" "{" Statement* "}"
+
+StreamProcessingStatement ::= "subscribe" Identifier "to" Expression ";"
+                           | "publish" Expression "to" Identifier ";"
+
+// Interoperability (Foreign Function Interface (FFI), WebAssembly, Cross-platform support)
+ForeignFunctionDeclaration ::= "extern" "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+WebAssemblyDeclaration ::= "wasm" "module" Identifier "{" Statement* "}"
+
+// Debugging with Tracing and Profiling
+DebuggingTools    ::= "log" Expression ";"
+                   | "debug" "(" Expression ")" "{" Statement* "}"
+                   | "trace" "(" Expression ")" "{" Statement* "}"
+
+// **Advanced Data Flow Constructs**:
+// Reactive Streams and Observables
+ObservableDeclaration ::= "observable" Identifier "{" Statement* "}"
+StreamDeclaration      ::= "stream" Identifier "{" Statement* "}"
+
+// Data processing pipelines and flows
+PipelineDeclaration    ::= "pipeline" Identifier "{" Statement* "}"
+
+// Higher-order functions (higher flexibility for functional constructs)
+HigherOrderFunctionDeclaration ::= "function" Identifier "(" ParameterList ")" ":" Type "{" Statement* "}"
+                                | "higher" Identifier "(" ParameterList ")" ":" Type "{" Statement* "}"
+
+// **Advanced Type System**:
+DependentTypes      ::= "type" Identifier ":" Type "with" Expression ";"
+
+// Root structure for a J-Ada program
+Program           ::= DeclarationSection StatementSection MainSection
+
+// Declaration Section (where types, variables, functions, etc., are defined)
+DeclarationSection ::= TypeDeclaration* VariableDeclaration* FunctionDeclaration* ClassDeclaration* StructDeclaration* ImportDeclaration* EnumDeclaration* InterfaceDeclaration*
+
+// Main Section (entry point of the program)
+MainSection        ::= "main" "(" ")" "{" Statement* "}"
+
+// Import declaration for importing modules or libraries
+ImportDeclaration  ::= "import" Identifier ("," Identifier)* ";"
+
+// Type Declarations (Custom types or aliases for types)
+TypeDeclaration    ::= "type" Identifier "=" Type ";"
+
+// Enum Declaration (for defining enumerated types)
+EnumDeclaration    ::= "enum" Identifier "{" EnumValue ("," EnumValue)* "}" ";"
+
+EnumValue          ::= Identifier
+
+// Interface Declaration (for defining interfaces that classes can implement)
+InterfaceDeclaration ::= "interface" Identifier "{" InterfaceMember* "}"
+
+InterfaceMember    ::= MethodDeclaration
+
+// Variable Declaration (Supports simple and complex types)
+VariableDeclaration ::= "var" Identifier ":" Type "=" Expression ";"
+
+// Function Declaration (Function signature with arguments and return types)
+FunctionDeclaration ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+// Parameter List for function calls
+ParameterList      ::= Parameter ("," Parameter)*
+
+Parameter          ::= Identifier ":" Type
+
+// Class Declaration (Supports classes, inheritance, methods, properties)
+ClassDeclaration   ::= "class" Identifier InheritanceClause? "{" ClassMember* "}"
+
+InheritanceClause  ::= "extends" Identifier
+
+ClassMember        ::= MethodDeclaration | PropertyDeclaration | ConstructorDeclaration
+
+MethodDeclaration  ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+PropertyDeclaration ::= "property" Identifier ":" Type "=" Expression ";"
+
+ConstructorDeclaration ::= "constructor" "(" ParameterList? ")" "{" Statement* "}"
+
+// Struct Declaration (Supports structures with data members)
+StructDeclaration  ::= "struct" Identifier "{" StructMember* "}"
+
+StructMember       ::= VariableDeclaration | PropertyDeclaration
+
+// Interface Implementation (Classes can implement interfaces)
+InterfaceImplementation ::= "implements" Identifier "{" InterfaceMember* "}"
+
+// Control Flow Statements (Support for branching and looping)
+ControlStatement   ::= IfStatement | WhileStatement | ForStatement | SwitchStatement | BreakStatement | ContinueStatement | MatchStatement
+
+IfStatement        ::= "if" "(" Expression ")" "{" Statement* "}" ( "else" "{" Statement* "}" )?
+
+WhileStatement     ::= "while" "(" Expression ")" "{" Statement* "}"
+
+ForStatement       ::= "for" "(" ForInitialization ";" Expression ";" ForUpdate ")" "{" Statement* "}"
+
+ForInitialization  ::= VariableDeclaration | ExpressionStatement
+
+ForUpdate          ::= ExpressionStatement
+
+SwitchStatement    ::= "switch" "(" Expression ")" "{" CaseClause* "}"
+
+CaseClause         ::= "case" Expression ":" Statement* | "default" ":" Statement*
+
+BreakStatement     ::= "break" ";"
+
+ContinueStatement  ::= "continue" ";"
+
+// Pattern Matching (Advanced pattern matching with guards and conditions)
+PatternMatching    ::= "match" "(" Expression ")" "{" CasePattern+ "}"
+
+CasePattern        ::= "case" Pattern ( "when" Expression )? "=>" Statement*
+
+Pattern             ::= LiteralPattern | VariablePattern | WildcardPattern | TuplePattern | ListPattern
+
+LiteralPattern     ::= Literal
+
+VariablePattern    ::= Identifier
+
+WildcardPattern    ::= "_"
+
+TuplePattern       ::= "(" Pattern ("," Pattern)* ")"
+
+ListPattern        ::= "[" Pattern ("," Pattern)* "]"
+
+// Error Handling Mechanisms (Exception handling, custom error types, etc.)
+ErrorHandlingStatement ::= TryCatchStatement | ThrowStatement | CustomErrorHandling | RetryStatement
+
+TryCatchStatement  ::= "try" "{" Statement* "}" "catch" "(" Identifier ":" Type ")" "{" Statement* "}" ("finally" "{" Statement* "}")?
+
+ThrowStatement     ::= "throw" Expression ";"
+
+CustomErrorHandling ::= "error" Identifier ":" Type "{" Statement* "}"
+
+RetryStatement     ::= "retry" ";"
+
+// Advanced Concurrency Mechanisms (Actors, Channels, Futures, Async)
+ConcurrencyStatement ::= ActorDeclaration | FutureDeclaration | AsyncFunctionDeclaration | ChannelDeclaration | ActorMessage
+
+ActorDeclaration   ::= "actor" Identifier "{" ActorMethodDeclaration* "}"
+
+ActorMethodDeclaration ::= "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+ChannelDeclaration ::= "channel" Identifier "(" Type "," Type ")"
+
+ActorMessage       ::= "message" Identifier "(" Expression* ")"
+
+// Asynchronous Constructs (Support for async/await and futures)
+AsyncFunctionDeclaration ::= "async" "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+AwaitExpression    ::= "await" Expression
+
+FutureExpression   ::= "future" "(" Expression ")"
+
+// Networking Constructs (Simplified networking models for web or socket interaction)
+NetworkOperation   ::= "connect" Identifier "to" Expression ";"
+                    | "send" Expression "to" Identifier ";"
+                    | "receive" Identifier "from" Identifier ";"
+                    | "listen" Identifier "on" Identifier ";"
+
+// Advanced Memory Management (Garbage collection, stack/heap management, and manual memory handling)
+MemoryManagement   ::= "alloc" Identifier ":" Type "=" Expression ";"
+                    | "dealloc" Identifier ";"
+                    | "gc" ";"
+
+// Security Features (Cryptographic and Authentication)
+SecurityStatement  ::= "encrypt" Expression "with" Identifier ";"
+                    | "decrypt" Expression "with" Identifier ";"
+                    | "sign" Expression "with" Identifier ";"
+                    | "verify" Expression "with" Identifier ";"
+
+// Data Structure Libraries (Graphs, Trees, Tries, etc.)
+DataStructureDeclaration ::= "graph" Identifier "{" DataStructureMember* "}"
+                          | "tree" Identifier "{" DataStructureMember* "}"
+                          | "queue" Identifier "{" DataStructureMember* "}"
+                          | "stack" Identifier "{" DataStructureMember* "}"
+
+DataStructureMember ::= VariableDeclaration | FunctionDeclaration
+
+// Meta-programming (Reflection, Code Generation, and Compilation Directives)
+MetaProgramming    ::= ReflectionStatement | CodeGenerationStatement | CompilationDirective
+
+ReflectionStatement ::= "reflect" "(" Identifier ")" "{" Statement* "}"
+
+CodeGenerationStatement ::= "generate" Identifier "{" Statement* "}"
+
+// Compilation Directives (Optimizations and preprocessor directives)
+CompilationDirective ::= "#optimize" ( "space" | "speed" | "size" )
+                     | "#debug" "enable"
+                     | "#debug" "disable"
+
+// Debugging and Tracing (Enabling detailed program tracking)
+DebuggingStatement ::= "log" Expression ";"
+                    | "debug" "(" Expression ")" "{" Statement* "}"
+                    | "trace" "(" Expression ")" "{" Statement* "}"
+
+// High-level System Operations (file IO, process management)
+FileIOStatement    ::= "read" Identifier "from" Expression ";"
+                    | "write" Expression "to" Identifier ";"
+                    | "open" Identifier "for" "read" | "write" | "append" ";"
+                    | "close" Identifier ";"
+
+// Profiling and Performance Management (Real-time profiling, memory tracing)
+ProfilingStatement ::= "profile" Expression "start" ";"
+                    | "profile" Expression "end" ";"
+                    | "track" Expression "memory" ";"
+
+// Events and Reactive Programming (Event-driven, stream processing)
+EventSystem        ::= EventDeclaration | EventHandlerDeclaration | StreamProcessingStatement
+
+EventDeclaration   ::= "event" Identifier "(" ParameterList? ")" "{" Statement* "}"
+
+EventHandlerDeclaration ::= "handler" Identifier "(" ParameterList? ")" "{" Statement* "}"
+
+StreamProcessingStatement ::= "subscribe" Identifier "to" Expression ";"
+                           | "publish" Expression "to" Identifier ";"
+
+// Interoperability (Foreign Function Interface (FFI), WebAssembly, Cross-platform support)
+ForeignFunctionDeclaration ::= "extern" "function" Identifier "(" ParameterList? ")" ":" Type "{" Statement* "}"
+
+WebAssemblyDeclaration ::= "wasm" "module" Identifier "{" Statement* "}"
+
+// Debugging with Tracing and Profiling
+DebuggingTools    ::= "log" Expression ";"
+                   | "debug" "(" Expression ")" "{" Statement* "}"
+                   | "trace" "(" Expression ")" "{" Statement* "}"
+
+// **Advanced Data Flow Constructs**:
+// Reactive Streams and Observables
+ObservableDeclaration ::= "observable" Identifier "{" Statement* "}"
+StreamDeclaration      ::= "stream" Identifier "{" Statement* "}"
+
+// Data processing pipelines and flows
+PipelineDeclaration    ::= "pipeline" Identifier "{" Statement* "}"
+
+// Higher-order functions (higher flexibility for functional constructs)
+HigherOrderFunctionDeclaration ::= "function" Identifier "(" ParameterList ")" ":" Type "{" Statement* "}"
+                                | "higher" Identifier "(" ParameterList ")" ":" Type "{" Statement* "}"
+
+// **Advanced Type System**:
+DependentTypes      ::= "type" Identifier ":" Type "with" Expression ";"
