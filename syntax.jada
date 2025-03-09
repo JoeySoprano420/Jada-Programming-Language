@@ -1,0 +1,113 @@
+# Jada-Programming-Language
+
+module main {
+    beg
+        render "Hi JADA!"
+    end
+}
+
+
+
+
+// Define a macro that runs a sequence of operations
+macro ShowMessage() {
+    start_macro("Display Message");
+    print("Hi JADA!");
+    return;
+}
+
+// Execute the macro
+ShowMessage();
+
+
+
+
+// Conditional execution based on system state
+if (user == "JADA") {
+    print("Welcome back, JADA!");
+} else {
+    print("Hello, guest!");
+}
+
+
+
+
+// Parallel execution of multiple greetings
+parallel {
+    macro Greet1();
+    macro Greet2();
+}
+
+// Define additional greeting macros
+macro Greet1() {
+    print("Hope you're having an awesome day, JADA!");
+}
+
+macro Greet2() {
+    print("Rocketing to greatness!");
+}
+
+
+
+
+@MetaLambda {
+    greet = (name) => "Hi " + name + "!"
+}
+
+echo(greet("JADA"))
+
+
+
+
+@DisplayMessage {
+    text: "Hi JADA!"
+    style: [bold, neon]
+}
+
+
+
+
+@GraphProcess {
+    Node Start -> Message("Hi JADA!") -> Output
+}
+
+
+
+let message: HoloType = "Hi JADA!"
+message.shiftTo(VisualText).render()
+
+
+
+# Declare variable
+greeting = "Hi JADA"
+
+# Function to print message
+fn print_message(msg) => print(msg)
+
+# Call the function to display the greeting
+print_message(greeting)
+
+
+
+; Store ASCII values of "Hi JADA!" into memory
+MOV [0x100], 0x48  ; 'H' -> ASCII 72
+MOV [0x101], 0x69  ; 'i' -> ASCII 105
+MOV [0x102], 0x20  ; Space -> ASCII 32
+MOV [0x103], 0x4A  ; 'J' -> ASCII 74
+MOV [0x104], 0x41  ; 'A' -> ASCII 65
+MOV [0x105], 0x44  ; 'D' -> ASCII 68
+MOV [0x106], 0x41  ; 'A' -> ASCII 65
+MOV [0x107], 0x21  ; '!' -> ASCII 33
+
+; Now, let's simulate outputting the characters one by one
+MOV R0, [0x100]   ; Load 'H' into R0
+MOV R1, [0x101]   ; Load 'i' into R1
+MOV R2, [0x102]   ; Load Space into R2
+MOV R3, [0x103]   ; Load 'J' into R3
+MOV R4, [0x104]   ; Load 'A' into R4
+MOV R5, [0x105]   ; Load 'D' into R5
+MOV R6, [0x106]   ; Load 'A' into R6
+MOV R7, [0x107]   ; Load '!' into R7
+
+; Here you would add code to simulate outputting or printing
+HLT                ; Halt program
